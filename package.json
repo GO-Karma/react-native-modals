@@ -29,6 +29,7 @@
   "license": "MIT",
   "homepage": "https://github.com/jacklam718/react-native-modals/blob/master/README.md",
   "dependencies": {
+    "@react-native-community/hooks": "^2.6.0",
     "babel-plugin-flow-react-proptypes": "^9.1.1",
     "prop-types": "^15.6.0"
   },
@@ -52,7 +53,7 @@
     "flow-bin": "^0.59.0",
     "jest": "^22.0.0",
     "jest-enzyme": "^7.1.0",
-    "react": "^16.0.0",
+    "react": "17.0.1",
     "react-dom": "^16.0.0",
     "react-native": "^0.50.4",
     "react-native-mock-render": "^0.0.26",
