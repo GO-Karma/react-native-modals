@@ -1,5 +1,5 @@
 import React from "react"
-import { Animated } from "react-native"
+import { Animated, Platform } from "react-native"
 import { useKeyboard } from "@react-native-community/hooks"
 
 const DraggableViewInner = ({ style, content, ...props }) => {
@@ -10,7 +10,7 @@ const DraggableViewInner = ({ style, content, ...props }) => {
       style={[
         style,
         {
-          paddingBottom: keyboard.keyboardShown ? keyboard.keyboardHeight : 0,
+          paddingBottom: (keyboard.keyboardShown && Platform.OS === 'ios') ? keyboard.keyboardHeight : 0,
         },
       ]}
       {...props}
