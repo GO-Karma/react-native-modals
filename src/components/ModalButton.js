@@ -4,10 +4,7 @@ import React from "react";
 import { Text, PixelRatio, StyleSheet, Platform } from "react-native";
 import { Positions } from "../constants/Constants";
 import type { ModalButtonProps } from "../type";
-import {
-  TouchableHighlight,
-  gestureHandlerRootHOC,
-} from "react-native-gesture-handler";
+import { TouchableHighlight } from "react-native-gesture-handler";
 
 const isAndroid = Platform.OS === "android";
 
@@ -49,7 +46,7 @@ const ModalButton = ({
   const disable = disabled ? styles.disable : null;
   const border = bordered ? styles.border : null;
 
-  return gestureHandlerRootHOC(() => (
+  return (
     <TouchableHighlight
       underlayColor="#F1F2F2"
       onPress={onPress}
@@ -59,7 +56,7 @@ const ModalButton = ({
     >
       <Text style={[styles.text, disable, textStyle]}>{text}</Text>
     </TouchableHighlight>
-  ));
+  );
 };
 
 export default ModalButton;
