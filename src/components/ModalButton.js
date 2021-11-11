@@ -44,23 +44,22 @@ const ModalButton = ({
   align = "center",
   disabled = false,
   bordered = false,
-}: ModalButtonProps) =>
-  gestureHandlerRootHOC(() => {
-    const buttonAlign = { alignSelf: Positions[align] };
-    const disable = disabled ? styles.disable : null;
-    const border = bordered ? styles.border : null;
+}: ModalButtonProps) => {
+  const buttonAlign = { alignSelf: Positions[align] };
+  const disable = disabled ? styles.disable : null;
+  const border = bordered ? styles.border : null;
 
-    return (
-      <TouchableHighlight
-        underlayColor="#F1F2F2"
-        onPress={onPress}
-        disabled={disabled}
-        activeOpacity={activeOpacity}
-        style={[styles.button, buttonAlign, border, style]}
-      >
-        <Text style={[styles.text, disable, textStyle]}>{text}</Text>
-      </TouchableHighlight>
-    );
-  });
+  return gestureHandlerRootHOC(() => (
+    <TouchableHighlight
+      underlayColor="#F1F2F2"
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={activeOpacity}
+      style={[styles.button, buttonAlign, border, style]}
+    >
+      <Text style={[styles.text, disable, textStyle]}>{text}</Text>
+    </TouchableHighlight>
+  ));
+};
 
 export default ModalButton;
