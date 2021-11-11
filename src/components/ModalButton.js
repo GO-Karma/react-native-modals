@@ -1,10 +1,15 @@
 // @flow
 
 import React from "react";
-import { Text, PixelRatio, StyleSheet, Platform } from "react-native";
+import {
+  Text,
+  PixelRatio,
+  TouchableHighlight,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import { Positions } from "../constants/Constants";
 import type { ModalButtonProps } from "../type";
-import { TouchableHighlight } from "react-native-gesture-handler";
 
 const isAndroid = Platform.OS === "android";
 
