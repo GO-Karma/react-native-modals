@@ -1,7 +1,6 @@
 import React from "react";
 import BaseModal from "./components/BaseModal";
 import BottomModal from "./components/BottomModal";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 let modal;
 class ModalPortal extends React.Component {
@@ -87,21 +86,17 @@ class ModalPortal extends React.Component {
   renderModal = ({ type = "modal", ...props }) => {
     if (type === "modal") {
       return (
-        <GestureHandlerRootView>
-          <BaseModal
-            {...props}
-            onDismiss={() => this.dismissHandler(props.key)}
-          />
-        </GestureHandlerRootView>
+        <BaseModal
+          {...props}
+          onDismiss={() => this.dismissHandler(props.key)}
+        />
       );
     } else if (type === "bottomModal") {
       return (
-        <GestureHandlerRootView>
-          <BottomModal
-            {...props}
-            onDismiss={() => this.dismissHandler(props.key)}
-          />
-        </GestureHandlerRootView>
+        <BottomModal
+          {...props}
+          onDismiss={() => this.dismissHandler(props.key)}
+        />
       );
     }
   };
