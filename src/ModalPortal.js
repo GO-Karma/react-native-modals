@@ -1,8 +1,9 @@
-import React from 'react';
-import BaseModal from './components/BaseModal';
-import BottomModal from './components/BottomModal';
+import React from "react";
+import BaseModal from "./components/BaseModal";
+import BottomModal from "./components/BottomModal";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
-let modal
+let modal;
 class ModalPortal extends React.Component {
   constructor(props) {
     super(props);
@@ -37,18 +38,18 @@ class ModalPortal extends React.Component {
 
   get current() {
     if (this.state.stack.length) {
-      return this.state.stack[this.state.stack.length-1].key;
+      return this.state.stack[this.state.stack.length - 1].key;
     }
   }
 
-  generateKey = () => `modal-${this.id++}`
+  generateKey = () => `modal-${this.id++}`;
 
-  getIndex = key => this.state.stack.findIndex(i => i.key === key)
+  getIndex = (key) => this.state.stack.findIndex((i) => i.key === key);
 
   getProps = (props) => {
     const key = props.key || this.generateKey();
     return { visible: true, ...props, key };
-  }
+  };
 
   show = (props) => {
     const mergedProps = this.getProps(props);
@@ -56,7 +57,7 @@ class ModalPortal extends React.Component {
       return { stack: stack.concat(mergedProps) };
     });
     return mergedProps.key;
-  }
+  };
 
   update = (key, props) => {
     const mergedProps = this.getProps({ ...props, key });
@@ -65,13 +66,13 @@ class ModalPortal extends React.Component {
       stack[index] = { ...stack[index], ...mergedProps };
       return { stack };
     });
-  }
+  };
 
   dismiss = (key = this.current) => {
     if (!key) return;
     const props = { ...this.state.stack[this.getIndex(key)], visible: false };
     this.update(key, props);
-  }
+  };
 
   dismissAll = () => this.state.stack.forEach(({ key }) => this.dismiss(key));
 
@@ -79,27 +80,31 @@ class ModalPortal extends React.Component {
     // dismiss hander: which will remove data from stack and call onDismissed callback
     const { onDismiss = () => {} } = this.state.stack[this.getIndex(key)];
     this.setState(({ stack }) => {
-      return { stack: stack.filter(i => i.key !== key) };
+      return { stack: stack.filter((i) => i.key !== key) };
     }, onDismiss);
-  }
+  };
 
-  renderModal = ({ type = 'modal', ...props }) => {
-    if (type === 'modal') {
+  renderModal = ({ type = "modal", ...props }) => {
+    if (type === "modal") {
       return (
-        <BaseModal
-          {...props}
-          onDismiss={() => this.dismissHandler(props.key)}
-        />
+        <GestureHandlerRootView>
+          <BaseModal
+            {...props}
+            onDismiss={() => this.dismissHandler(props.key)}
+          />
+        </GestureHandlerRootView>
       );
-    } else if (type === 'bottomModal') {
+    } else if (type === "bottomModal") {
       return (
-        <BottomModal
-          {...props}
-          onDismiss={() => this.dismissHandler(props.key)}
-        />
+        <GestureHandlerRootView>
+          <BottomModal
+            {...props}
+            onDismiss={() => this.dismissHandler(props.key)}
+          />
+        </GestureHandlerRootView>
       );
     }
-  }
+  };
 
   render() {
     return this.state.stack.map(this.renderModal);
