@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Fragment, Component } from "react"
+import React, { Fragment, Component } from "react";
 import {
   View,
   StyleSheet,
@@ -8,32 +8,33 @@ import {
   Dimensions,
   BackAndroid as RNBackAndroid,
   BackHandler as RNBackHandler,
-} from "react-native"
+} from "react-native";
 
-import DraggableView from "./DraggableView"
-import ModalContext from "./ModalContext"
-import Backdrop from "./Backdrop"
-import type { ModalProps } from "../type"
-import Animation from "../animations/Animation"
-import FadeAnimation from "../animations/FadeAnimation"
+import DraggableView from "./DraggableView";
+import ModalContext from "./ModalContext";
+import Backdrop from "./Backdrop";
+import type { ModalProps } from "../type";
+import Animation from "../animations/Animation";
+import FadeAnimation from "../animations/FadeAnimation";
 
-const BackHandler = RNBackHandler || RNBackAndroid
+const BackHandler = RNBackHandler || RNBackAndroid;
 
 // dialog states
-const MODAL_OPENING: string = "opening"
-const MODAL_OPENED: string = "opened"
-const MODAL_CLOSING: string = "closing"
-const MODAL_CLOSED: string = "closed"
+const MODAL_OPENING: string = "opening";
+const MODAL_OPENED: string = "opened";
+const MODAL_CLOSING: string = "closing";
+const MODAL_CLOSED: string = "closed";
 
 // default dialog config
-const DEFAULT_ANIMATION_DURATION: number = 150
+const DEFAULT_ANIMATION_DURATION: number = 150;
 
 // event types
-const HARDWARE_BACK_PRESS_EVENT: string = "hardwareBackPress"
+const HARDWARE_BACK_PRESS_EVENT: string = "hardwareBackPress";
 
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
+    zIndex: 1000,
   },
   modal: {
     overflow: "hidden",
@@ -53,18 +54,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-})
+});
 
 type ModalState =
   | typeof MODAL_OPENING
   | typeof MODAL_OPENED
   | typeof MODAL_CLOSING
-  | typeof MODAL_CLOSED
+  | typeof MODAL_CLOSED;
 
 type State = {
   modalAnimation: Animation,
   modalState: ModalState,
-}
+};
 
 class BaseModal extends Component<ModalProps, State> {
   static defaultProps = {
@@ -90,10 +91,10 @@ class BaseModal extends Component<ModalProps, State> {
     onSwipeRelease: () => {},
     onSwipingOut: () => {},
     useNativeDriver: true,
-  }
+  };
 
   constructor(props: ModalProps) {
-    super(props)
+    super(props);
 
     this.state = {
       modalAnimation:
@@ -102,26 +103,26 @@ class BaseModal extends Component<ModalProps, State> {
           animationDuration: props.animationDuration,
         }),
       modalState: MODAL_CLOSED,
-    }
+    };
   }
 
   componentDidMount() {
     if (this.props.visible) {
-      this.show()
+      this.show();
     }
     BackHandler.addEventListener(
       HARDWARE_BACK_PRESS_EVENT,
       this.onHardwareBackPress
-    )
+    );
   }
 
   componentDidUpdate(prevProps: ModalProps) {
     if (this.props.visible !== prevProps.visible) {
       if (this.props.visible) {
-        this.show()
-        return
+        this.show();
+        return;
       }
-      this.dismiss()
+      this.dismiss();
     }
   }
 
@@ -129,86 +130,86 @@ class BaseModal extends Component<ModalProps, State> {
     BackHandler.removeEventListener(
       HARDWARE_BACK_PRESS_EVENT,
       this.onHardwareBackPress
-    )
+    );
   }
 
-  onHardwareBackPress = (): boolean => this.props.onHardwareBackPress()
+  onHardwareBackPress = (): boolean => this.props.onHardwareBackPress();
 
   get pointerEvents(): string {
-    const { overlayPointerEvents } = this.props
-    const { modalState } = this.state
+    const { overlayPointerEvents } = this.props;
+    const { modalState } = this.state;
     if (overlayPointerEvents) {
-      return overlayPointerEvents
+      return overlayPointerEvents;
     }
-    return modalState === MODAL_OPENED ? "auto" : "none"
+    return modalState === MODAL_OPENED ? "auto" : "none";
   }
 
   get modalSize(): Object {
     const { width: screenWidth, height: screenHeight } =
-      Dimensions.get("window")
-    let { width, height } = this.props
+      Dimensions.get("window");
+    let { width, height } = this.props;
     if (width && width > 0.0 && width <= 1.0) {
-      width *= screenWidth
+      width *= screenWidth;
     }
     if (height && height > 0.0 && height <= 1.0) {
-      height *= screenHeight
+      height *= screenHeight;
     }
-    return { width, height }
+    return { width, height };
   }
 
   show(): void {
     this.setState({ modalState: MODAL_OPENING }, () => {
       this.state.modalAnimation.in(() => {
-        this.setState({ modalState: MODAL_OPENED }, this.props.onShow)
-      })
-    })
+        this.setState({ modalState: MODAL_OPENED }, this.props.onShow);
+      });
+    });
   }
 
   dismiss(): void {
     this.setState({ modalState: MODAL_CLOSING }, () => {
       if (this.isSwipingOut) {
-        this.setState({ modalState: MODAL_CLOSED }, this.props.onDismiss)
-        return
+        this.setState({ modalState: MODAL_CLOSED }, this.props.onDismiss);
+        return;
       }
       this.state.modalAnimation.out(() => {
-        this.setState({ modalState: MODAL_CLOSED }, this.props.onDismiss)
-      })
-    })
+        this.setState({ modalState: MODAL_CLOSED }, this.props.onDismiss);
+      });
+    });
   }
 
   handleMove = (event): void => {
     // prevent flashing when modal is closing and onMove callback invoked
     if (this.state.modalState === MODAL_CLOSING) {
-      return
+      return;
     }
     if (!this.lastSwipeEvent) {
-      this.lastSwipeEvent = event
+      this.lastSwipeEvent = event;
     }
-    let newOpacity
-    const opacity = this.props.overlayOpacity
+    let newOpacity;
+    const opacity = this.props.overlayOpacity;
     if (Math.abs(event.axis.y)) {
-      const lastAxis = Math.abs(this.lastSwipeEvent.layout.y)
-      const currAxis = Math.abs(event.axis.y)
+      const lastAxis = Math.abs(this.lastSwipeEvent.layout.y);
+      const currAxis = Math.abs(event.axis.y);
       newOpacity =
         opacity -
-        (opacity * currAxis) / (Dimensions.get("window").height - lastAxis)
+        (opacity * currAxis) / (Dimensions.get("window").height - lastAxis);
     } else {
-      const lastAxis = Math.abs(this.lastSwipeEvent.layout.x)
-      const currAxis = Math.abs(event.axis.x)
+      const lastAxis = Math.abs(this.lastSwipeEvent.layout.x);
+      const currAxis = Math.abs(event.axis.x);
       newOpacity =
         opacity -
-        (opacity * currAxis) / (Dimensions.get("window").width - lastAxis)
+        (opacity * currAxis) / (Dimensions.get("window").width - lastAxis);
     }
-    this.backdrop.setOpacity(newOpacity)
-  }
+    this.backdrop.setOpacity(newOpacity);
+  };
 
   handleSwipingOut = (event) => {
-    this.isSwipingOut = true
-    this.props.onSwipingOut(event)
-  }
+    this.isSwipingOut = true;
+    this.props.onSwipingOut(event);
+  };
 
   render() {
-    const { modalState, modalAnimation } = this.state
+    const { modalState, modalAnimation } = this.state;
     const {
       rounded,
       modalTitle,
@@ -227,12 +228,12 @@ class BaseModal extends Component<ModalProps, State> {
       onSwipeOut,
       swipeDirection,
       swipeThreshold,
-    } = this.props
+    } = this.props;
 
     const overlayVisible =
-      hasOverlay && [MODAL_OPENING, MODAL_OPENED].includes(modalState)
-    const round = rounded ? styles.round : null
-    const hidden = modalState === MODAL_CLOSED && styles.hidden
+      hasOverlay && [MODAL_OPENING, MODAL_OPENED].includes(modalState);
+    const round = rounded ? styles.round : null;
+    const hidden = modalState === MODAL_CLOSED && styles.hidden;
 
     return (
       <ModalContext.Provider
@@ -259,7 +260,7 @@ class BaseModal extends Component<ModalProps, State> {
               <Fragment>
                 <Backdrop
                   ref={(ref) => {
-                    this.backdrop = ref
+                    this.backdrop = ref;
                   }}
                   pointerEvents={this.pointerEvents}
                   visible={overlayVisible}
@@ -289,8 +290,8 @@ class BaseModal extends Component<ModalProps, State> {
           </DraggableView>
         </View>
       </ModalContext.Provider>
-    )
+    );
   }
 }
 
-export default BaseModal
+export default BaseModal;
